@@ -24,6 +24,29 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+// Route to handle timestamp requests
+app.get('/api/:dateString?', (req, res) => {
+  const dateString = req.params.dateString;
+  let date;
+
+  if (!dateString) {
+    date = new Date();
+  } else if (/\d{5,}/.test(dateString)) {
+    // If the input is a Unix timestamp
+    date = new Date(parseInt(dateString));
+  } else {
+    date = new Date(dateString);
+  }
+
+  if (isNaN(date)) {
+    return res.json({ error: 'Invalid date' });
+  }
+
+  const unixTimestamp = date.getTime();
+  const utcDate = date.toUTCString();
+
+  res.json({ unix: unixTimestamp, utc: utcDate });
+});
 
 
 // listen for requests :)
